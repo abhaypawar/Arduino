@@ -1,0 +1,49 @@
+//The Speaker will be beeping when the distance sensor measures the object nearby
+//Useful for Vision Impairement Personal Assistance 
+//Refer the Repository for more such code files
+
+unsigned long echo = 0;
+int ultraSoundSignal = 7; // Ultrasound signal pin
+unsigned long ultrasoundValue = 0;
+int val;
+void setup()
+{
+ Serial.begin(9600);
+ pinMode(ultraSoundSignal,OUTPUT);
+ pinMode(9,OUTPUT);
+ pinMode(13,INPUT);
+}
+unsigned long ping()
+{
+ pinMode(ultraSoundSignal, OUTPUT); // Switch signalpin to output
+ digitalWrite(ultraSoundSignal, LOW); // Send low pulse
+ delayMicroseconds(2); // Wait for 2 microseconds
+ digitalWrite(ultraSoundSignal, HIGH); // Send high pulse
+ delayMicroseconds(5); // Wait for 5 microseconds
+ digitalWrite(ultraSoundSignal, LOW); // Holdoff
+ pinMode(ultraSoundSignal, INPUT); // Switch signalpin to input
+ digitalWrite(ultraSoundSignal, HIGH); // Turn on pullup resistor
+ echo = pulseIn(ultraSoundSignal, HIGH); //Listen for echo
+ ultrasoundValue = (float)echo * 0.01723; //convert to CM then to inches
+ return ultrasoundValue;
+}
+void loop()
+{
+ val=digitalRead(13);
+ int x = 0;
+ if(val==HIGH)
+ {
+ x = ping();
+ Serial.println(x);
+ if(x<12)
+ {
+ digitalWrite(9,HIGH);
+ delay(100); 
+ digitalWrite(9,LOW);
+ delay(100);
+ }
+ else
+ digitalWrite(9,LOW);
+ delay(250);
+ }
+} 
